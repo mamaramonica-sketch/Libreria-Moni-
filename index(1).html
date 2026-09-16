@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#8ea9b8">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Libreria Moni">
+  <title>Libreria Moni</title>
+
+  <style>
+    :root {
+      --blue: #8ea9b8;
+      --blue-dark: #587483;
+      --blue-light: #edf3f6;
+      --cream: #fbfaf7;
+      --text: #29343a;
+      --muted: #718087;
+      --white: #ffffff;
+      --danger: #b65f5f;
+      --shadow: 0 8px 24px rgba(50, 70, 80, .10);
+      --radius: 18px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--cream);
+      color: var(--text);
+    }
+
+    header {
+      background: linear-gradient(135deg, var(--blue), #a9bdc7);
+      color: white;
+      padding: calc(22px + env(safe-area-inset-top)) 18px 22px;
+      text-align: center;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      box-shadow: 0 3px 12px rgba(0,0,0,.08);
+    }
+
+    header h1 {
+      margin: 0;
+      font-family: Georgia, serif;
+      font-size: 28px;
+    }
+
+    header p {
+      margin: 5px 0 0;
+      font-size: 13px;
+      opacity: .92;
+    }
+
+    main {
+      max-width: 760px;
+      margin: auto;
+      padding: 18px;
+      padding-bottom: calc(35px + env(safe-area-inset-bottom));
+    }
+
+    .card {
+      background: var(--white);
+      border-radius: var(--radius);
+      padding: 18px;
+      margin-bottom: 16px;
+      box-shadow: var(--shadow);
+    }
+
+    .add-title {
+      font-family: Georgia, serif;
+      font-size: 21px;
+      margin: 0 0 14px;
+    }
+
+    button, input, select {
+      font: inherit;
+    }
+
+    .isbn-row {
+      display: flex;
+      gap: 8px;
+    }
+
+    input, select {
+      width: 100%;
+      border: 1px solid #d7e0e4;
+      border-radius: 12px;
+      padding: 12px 13px;
+      background: #fff;
+      color: var(--text);
+      outline: none;
+    }
+
+    input:focus, select:focus {
+      border-color: var(--blue);
+      box-shadow: 0 0 0 3px rgba(142,169,184,.15);
+    }
+
+    button {
+      border: 0;
+      border-radius: 12px;
+      padding: 12px 15px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    .primary {
+      background: var(--blue-dark);
+      color: white;
+      white-space: nowrap;
+    }
+
+    .secondary {
+      background: var(--blue-light);
+      color: var(--blue-dark);
+    }
+
+    .danger {
+      background: #f8eaea;
+      color: var(--danger);
+    }
+
+    .message {
+      margin-top: 10px;
+      min-height: 20px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .manual {
+      margin-top: 14px;
+      display: grid;
+      gap: 9px;
+    }
+
+    .manual button {
+      justify-self: start;
+    }
+
+    .filters {
+      display: grid;
+      grid-template-columns: 1fr 160px;
+      gap: 9px;
+      margin-bottom: 14px;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 9px;
+      margin-bottom: 14px;
+    }
+
+    .stat {
+      background: var(--blue-light);
+      border-radius: 14px;
+      padding: 12px 8px;
+      text-align: center;
+    }
+
+    .stat strong {
+      display: block;
+      font-size: 22px;
+      color: var(--blue-dark);
+    }
+
+    .stat span {
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .book {
+      display: grid;
+      grid-template-columns: 72px 1fr;
+      gap: 14px;
+      padding: 14px 0;
+      border-bottom: 1px solid #edf0f1;
+    }
+
+    .book:last-child { border-bottom: 0; }
+
+    .cover {
+      width: 72px;
+      height: 102px;
+      object-fit: cover;
+      border-radius: 7px;
+      background: var(--blue-light);
+      box-shadow: 2px 3px 8px rgba(0,0,0,.12);
+    }
+
+    .cover-placeholder {
+      width: 72px;
+      height: 102px;
+      border-radius: 7px;
+      background: var(--blue);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 6px;
+      font-family: Georgia, serif;
+      font-size: 11px;
+    }
+
+    .book h3 {
+      margin: 0 0 4px;
+      font-family: Georgia, serif;
+      font-size: 18px;
+    }
+
+    .author {
+      color: var(--muted);
+      font-size: 13px;
+      margin-bottom: 7px;
+    }
+
+    .isbn {
+      color: #8b989e;
+      font-size: 11px;
+      margin-bottom: 9px;
+    }
+
+    .book-actions {
+      display: flex;
+      gap: 7px;
+      flex-wrap: wrap;
+    }
+
+    .book-actions button {
+      padding: 8px 10px;
+      font-size: 12px;
+    }
+
+    .badge {
+      display: inline-block;
+      border-radius: 20px;
+      padding: 5px 9px;
+      background: var(--blue-light);
+      color: var(--blue-dark);
+      font-size: 11px;
+      margin-bottom: 8px;
+    }
+
+    .empty {
+      text-align: center;
+      color: var(--muted);
+      padding: 30px 10px;
+      font-size: 14px;
+    }
+
+    dialog {
+      width: min(92vw, 520px);
+      border: 0;
+      border-radius: 20px;
+      padding: 0;
+      box-shadow: 0 20px 60px rgba(0,0,0,.25);
+    }
+
+    dialog::backdrop {
+      background: rgba(30,40,45,.42);
+    }
+
+    .dialog-content {
+      padding: 20px;
+    }
+
+    .dialog-content h2 {
+      margin-top: 0;
+      font-family: Georgia, serif;
+    }
+
+    .dialog-grid {
+      display: grid;
+      gap: 10px;
+    }
+
+    .dialog-actions {
+      display: flex;
+      gap: 8px;
+      justify-content: flex-end;
+      margin-top: 16px;
+    }
+
+    @media (max-width: 520px) {
+      .isbn-row { flex-direction: column; }
+      .filters { grid-template-columns: 1fr; }
+      .stats { gap: 6px; }
+      .book { grid-template-columns: 62px 1fr; }
+      .cover, .cover-placeholder { width: 62px; height: 90px; }
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <h1>📚 Libreria Moni</h1>
+    <p>La mia libreria personale</p>
+  </header>
+
+  <main>
+    <section class="card">
+      <h2 class="add-title">Aggiungi un libro</h2>
+
+      <div class="isbn-row">
+        <input id="isbnInput" type="text" inputmode="numeric"
+               placeholder="Inserisci il codice ISBN">
+        <button class="primary" onclick="cercaISBN()">Cerca ISBN</button>
+      </div>
+
+      <div id="message" class="message"></div>
+
+      <div class="manual">
+        <button class="secondary" onclick="apriManuale()">＋ Inserisci manualmente</button>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="stats">
+        <div class="stat">
+          <strong id="totale">0</strong>
+          <span>Totali</span>
+        </div>
+        <div class="stat">
+          <strong id="letti">0</strong>
+          <span>Letti</span>
+        </div>
+        <div class="stat">
+          <strong id="daLeggere">0</strong>
+          <span>Da leggere</span>
+        </div>
+      </div>
+
+      <div class="filters">
+        <input id="searchInput" type="search"
+               placeholder="🔎 Cerca titolo o autore..."
+               oninput="renderLibri()">
+
+        <select id="filterInput" onchange="renderLibri()">
+          <option value="tutti">Tutti i libri</option>
+          <option value="da-leggere">Da leggere</option>
+          <option value="in-lettura">In lettura</option>
+          <option value="letto">Letti</option>
+        </select>
+      </div>
+
+      <div id="listaLibri"></div>
+    </section>
+  </main>
+
+  <dialog id="bookDialog">
+    <div class="dialog-content">
+      <h2>Dettagli del libro</h2>
+
+      <div class="dialog-grid">
+        <input id="editTitolo" placeholder="Titolo">
+        <input id="editAutore" placeholder="Autore">
+        <input id="editISBN" placeholder="ISBN">
+        <input id="editAnno" type="number" placeholder="Anno">
+        <input id="editCopertina" placeholder="URL copertina (facoltativo)">
+        <select id="editStato">
+          <option value="da-leggere">Da leggere</option>
+          <option value="in-lettura">In lettura</option>
+          <option value="letto">Letto</option>
+        </select>
+      </div>
+
+      <div class="dialog-actions">
+        <button class="secondary" onclick="chiudiDialog()">Annulla</button>
+        <button class="primary" onclick="salvaLibro()">Salva</button>
+      </div>
+    </div>
+  </dialog>
+
+  <script>
+    const STORAGE_KEY = "libreria-moni-libri";
+    let libri = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+    let modificaIndice = null;
+
+    function salvaArchivio() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(libri));
+    }
+
+    function mostraMessaggio(testo, errore = false) {
+      const el = document.getElementById("message");
+      el.textContent = testo;
+      el.style.color = errore ? "#b65f5f" : "#718087";
+    }
+
+    function normalizzaISBN(isbn) {
+      return isbn.replace(/[^0-9Xx]/g, "").toUpperCase();
+    }
+
+    async function cercaISBN() {
+      const input = document.getElementById("isbnInput");
+      const isbn = normalizzaISBN(input.value);
+
+      if (!isbn) {
+        mostraMessaggio("Inserisci un codice ISBN.", true);
+        return;
+      }
+
+      mostraMessaggio("Cerco il libro... 📖");
+
+      try {
+        const risposta = await fetch(
+          "https://www.googleapis.com/books/v1/volumes?q=isbn:" +
+          encodeURIComponent(isbn)
+        );
+
+        if (!risposta.ok) throw new Error("Errore di rete");
+
+        const dati = await risposta.json();
+
+        if (!dati.items || dati.items.length === 0) {
+          mostraMessaggio(
+            "Libro non trovato. Puoi inserirlo manualmente.",
+            true
+          );
+          return;
+        }
+
+        const info = dati.items[0].volumeInfo || {};
+
+        const libro = {
+          titolo: info.title || "Titolo non disponibile",
+          autore: (info.authors || []).join(", ") || "Autore non disponibile",
+          isbn: isbn,
+          anno: info.publishedDate
+            ? info.publishedDate.substring(0, 4)
+            : "",
+          copertina: info.imageLinks
+            ? (info.imageLinks.thumbnail || info.imageLinks.smallThumbnail || "")
+                .replace("http://", "https://")
+            : "",
+          stato: "da-leggere"
+        };
+
+        if (libri.some(l => normalizzaISBN(l.isbn || "") === isbn)) {
+          mostraMessaggio("Questo libro è già nella tua libreria.", true);
+          return;
+        }
+
+        libri.push(libro);
+        salvaArchivio();
+        input.value = "";
+        mostraMessaggio("Libro aggiunto alla libreria! ✨");
+        renderLibri();
+
+      } catch (errore) {
+        console.error(errore);
+        mostraMessaggio(
+          "Non riesco a recuperare i dati. Controlla la connessione o inserisci il libro manualmente.",
+          true
+        );
+      }
+    }
+
+    function apriManuale() {
+      modificaIndice = null;
+
+      document.getElementById("editTitolo").value = "";
+      document.getElementById("editAutore").value = "";
+      document.getElementById("editISBN").value = "";
+      document.getElementById("editAnno").value = "";
+      document.getElementById("editCopertina").value = "";
+      document.getElementById("editStato").value = "da-leggere";
+
+      document.getElementById("bookDialog").showModal();
+    }
+
+    function modificaLibro(indice) {
+      const libro = libri[indice];
+      modificaIndice = indice;
+
+      document.getElementById("editTitolo").value = libro.titolo || "";
+      document.getElementById("editAutore").value = libro.autore || "";
+      document.getElementById("editISBN").value = libro.isbn || "";
+      document.getElementById("editAnno").value = libro.anno || "";
+      document.getElementById("editCopertina").value = libro.copertina || "";
+      document.getElementById("editStato").value = libro.stato || "da-leggere";
+
+      document.getElementById("bookDialog").showModal();
+    }
+
+    function salvaLibro() {
+      const titolo = document.getElementById("editTitolo").value.trim();
+      const autore = document.getElementById("editAutore").value.trim();
+
+      if (!titolo) {
+        alert("Inserisci almeno il titolo del libro.");
+        return;
+      }
+
+      const libro = {
+        titolo,
+        autore,
+        isbn: normalizzaISBN(document.getElementById("editISBN").value),
+        anno: document.getElementById("editAnno").value.trim(),
+        copertina: document.getElementById("editCopertina").value.trim(),
+        stato: document.getElementById("editStato").value
+      };
+
+      if (modificaIndice === null) {
+        libri.push(libro);
+      } else {
+        libri[modificaIndice] = libro;
+      }
+
+      salvaArchivio();
+      chiudiDialog();
+      renderLibri();
+      mostraMessaggio("Libro salvato. ✨");
+    }
+
+    function chiudiDialog() {
+      document.getElementById("bookDialog").close();
+    }
+
+    function cambiaStato(indice) {
+      const stati = ["da-leggere", "in-lettura", "letto"];
+      const attuale = libri[indice].stato || "da-leggere";
+      const posizione = stati.indexOf(attuale);
+      libri[indice].stato = stati[(posizione + 1) % stati.length];
+
+      salvaArchivio();
+      renderLibri();
+    }
+
+    function eliminaLibro(indice) {
+      if (!confirm("Vuoi davvero eliminare questo libro dalla libreria?")) return;
+
+      libri.splice(indice, 1);
+      salvaArchivio();
+      renderLibri();
+      mostraMessaggio("Libro eliminato.");
+    }
+
+    function testoStato(stato) {
+      if (stato === "letto") return "✓ Letto";
+      if (stato === "in-lettura") return "📖 In lettura";
+      return "○ Da leggere";
+    }
+
+    function renderLibri() {
+      const contenitore = document.getElementById("listaLibri");
+      const ricerca = document.getElementById("searchInput").value
+        .toLowerCase()
+        .trim();
+      const filtro = document.getElementById("filterInput").value;
+
+      const filtrati = libri
+        .map((libro, indice) => ({ libro, indice }))
+        .filter(({ libro }) => {
+          const testo = `${libro.titolo || ""} ${libro.autore || ""}`.toLowerCase();
+          const corrispondeRicerca = !ricerca || testo.includes(ricerca);
+          const corrispondeFiltro =
+            filtro === "tutti" || (libro.stato || "da-leggere") === filtro;
+
+          return corrispondeRicerca && corrispondeFiltro;
+        });
+
+      document.getElementById("totale").textContent = libri.length;
+      document.getElementById("letti").textContent =
+        libri.filter(l => l.stato === "letto").length;
+      document.getElementById("daLeggere").textContent =
+        libri.filter(l => !l.stato || l.stato === "da-leggere").length;
+
+      if (filtrati.length === 0) {
+        contenitore.innerHTML =
+          '<div class="empty">📚 Nessun libro trovato.<br>La tua libreria aspetta il prossimo acquisto!</div>';
+        return;
+      }
+
+      contenitore.innerHTML = filtrati.map(({ libro, indice }) => {
+        const copertina = libro.copertina
+          ? `<img class="cover" src="${escapeHtml(libro.copertina)}"
+               alt="Copertina di ${escapeHtml(libro.titolo)}"
+               onerror="this.outerHTML='<div class=&quot;cover-placeholder&quot;>📖<br>Libro</div>'">`
+          : '<div class="cover-placeholder">📖<br>Libro</div>';
+
+        return `
+          <article class="book">
+            <div>${copertina}</div>
+
+            <div>
+              <div class="badge">${testoStato(libro.stato || "da-leggere")}</div>
+              <h3>${escapeHtml(libro.titolo || "Senza titolo")}</h3>
+              <div class="author">${escapeHtml(libro.autore || "Autore non indicato")}</div>
+              ${libro.anno ? `<div class="isbn">Anno: ${escapeHtml(String(libro.anno))}</div>` : ""}
+              ${libro.isbn ? `<div class="isbn">ISBN: ${escapeHtml(libro.isbn)}</div>` : ""}
+
+              <div class="book-actions">
+                <button class="secondary" onclick="cambiaStato(${indice})">
+                  Cambia stato
+                </button>
+                <button class="secondary" onclick="modificaLibro(${indice})">
+                  Modifica
+                </button>
+                <button class="danger" onclick="eliminaLibro(${indice})">
+                  Elimina
+                </button>
+              </div>
+            </div>
+          </article>
+        `;
+      }).join("");
+    }
+
+    function escapeHtml(valore) {
+      return String(valore)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    document.getElementById("isbnInput").addEventListener("keydown", function(e) {
+      if (e.key === "Enter") cercaISBN();
+    });
+
+    renderLibri();
+  </script>
+</body>
+</html>
